@@ -1,0 +1,25 @@
+Exercitar a construção de sistemas de hardware com múltiplos domínios de relógio (clock) e
+a comunicação entre blocks com o protocolo SPI. O protocolo SPI é utilizado para ilustrar a
+comunicação entre múltiplos blocos sincronizados por um sinal de relógio de referência (SCLK). O
+trabalho também visa o exercício do trabalho em equipe. A organização do trabalho considera as
+combinações abaixo:
+
+● O trabalho possui 1 entregável: Um link para o repositório no Github ou serviço similar,
+    contendo todos os arquivos e artefatos do seu projeto. Seu repositório deverá conter um
+    arquivo README.md com a apresentação do projeto, instruções de execução e resultados
+    obtidos.
+
+● Este trabalho envolverá apenas a simulação comportamental dos blocos desenvolvidos. Cada
+    grupo poderá escolher, a seu critério, executar o trabalho na ferramenta Questa (ou ModelSim)
+    ou XCelium. Não serão aceitos projetos em outras ferramentas.
+
+● Data limite: 18/06/2026 até 23h50. TODOS OS MEMBROS DO GRUPO DEVERÃO
+    REALIZAR A ENTREGA (o link para seu repositório ou projeto compartilhado com os colegas). 
+    Falha em entregar o trabalho no prazo acarretará em nota zero para aquele integrante.
+
+● Cada grupo poderá conter no mínimo 3 e no máximo 5 alunos. Diálogo e trabalho em equipe
+    são requisitos para a execução do trabalho.
+
+Enunciado: O grupo deverá desenvolver um bloco chamado controlador de sensores (CS). Este bloco é
+    responsável por intermediar a comunicação entre diversos sensores, acessados através do protocolo
+    SPI, e a memória, acessada através da interface de memória. O projeto possui as seguintes partes.
