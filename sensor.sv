@@ -1,71 +1,129 @@
-module sensor
-    parameter SENSOR_ID,
-    parameter REG_COUNT,
-    parameter REG_WIDTH,
+module sensor #(
+    parameter SENSOR_ID = 0,
+    parameter REG_COUNT = 2, // 2 registradores de 8 bits = 16 bits totais
+    parameter REG_WIDTH = 8
 )(
-    input  logic clock,
-    input  logic reset,
+    input  logic clock, // Clock interno do sensor (ex: 15MHz, 40MHz)
+    input  logic reset, // Ativo em nível baixo (0)
 
-    input  logic[$clog2(REG_COUNT)] se,
-    output logic miso,
-    input  logic mosi,
-    output logic sclk
+    input  logic se,    // Slave Enable vindo do Master (ativo em 1)
+    output logic miso,  // Master In Slave Out (saída de dados)
+    input  logic mosi,  // Master Out Slave In (entrada de dados, se houver)
+    input  logic sclk   // Clock do SPI vindo do Master (100MHz)
 );
 
-// lista de registradores
-logic[REG_WIDTH-1:0][REG_COUNT-1:0] regs;
+    // Declarações Internas
+    
+    // Lista de registradores (Memória interna)
+    logic [REG_WIDTH-1:0] regs [REG_COUNT-1:0];
 
-// temp register
-logic[REG_WIDTH-1:0] temp_reg;
+    // Registrador temporário para deslocamento
+    logic [(REG_WIDTH * REG_COUNT)-1:0] temp_reg;
+    
+    // Contador para gerenciar o envio dos bits
+    logic [4:0] bit_counter; 
 
-// clock de saída do sensor,
-// para sincronizar com o coletor
-assign sclk = clock;
+    // Divisor de clock/contador para simular variação no sensor
+    logic [31:0] clk_div;
 
-// state machine - SPI
-enum state_t = { IDLE, SETUP, RECEIVE, SEND, CLEANUP};
+    // Máquina de estados - SPI
+    typedef enum logic [2:0] {IDLE, SETUP, RECEIVE, SEND, CLEANUP} state_t;
+    state_t EA, PE;
 
-state_t EA;  // estado atual
-state_t PE;  // próximo estado
-
-// verifica o estado atual e decide qual 
-// será o próximo estado
-always @(posedge clk, posedge reset) begin
-    if(reset == 0) begin
-        // case (estado) ...
-    end else begin 
-        PE <= IDLE;
+    
+    // Atualização Periódica dos Dados (Clock Interno)
+    always_ff @(posedge clock or negedge reset) begin   
+        if (reset == 0) begin
+            clk_div <= 0;
+            for (int i = 0; i < REG_COUNT; i++) begin
+                regs[i] <= SENSOR_ID + i; // Valor base inicial de reset
+            end
+        end else begin
+            clk_div <= clk_div + 1;
+            // Atualiza os dados artificialmente a cada X ciclos
+            if (clk_div == 32'd100_000) begin
+                clk_div <= 0;
+                // Simula uma nova leitura alterando o registrador 0
+                regs[0] <= regs[0] + 1'b1; 
+                regs[1] <= SENSOR_ID;
+            end
+        end
     end
 
-    EA <= PE; // o estado atual é o próximo
-              // estado do ciclo anterior
-end   
 
-// lê/escreve dos registradores internos 
-// de acordo com o estado atual
-always @(posedge clk, posedge reset) begin
-    case (EA) begin
+    // FSM do SPI - Atualização de Estado
+    always_ff @(posedge sclk or negedge reset) begin
+        if (reset == 0) begin
+            EA <= IDLE;
+        end else begin 
+            EA <= PE;
+        end   
+    end   
 
-    end 
-end   
-
-// atualiza a leitura do sensor periodicamente
-always @(posedge clk, posedge reset) begin   
-    if(reset == 0) begin
-        genvar i;
-        generate
-            for (i = 0; i < REG_COUNT; i++) begin
-                regs[i] = $random(SENSOR_ID);
+    
+    // FSM do SPI - Lógica de Próximo Estado
+    always_comb begin
+        PE = EA; // Valor padrão: mantém o estado atual
+        case (EA)
+            IDLE: begin
+                if (se == 1'b1) PE = SETUP; // Acorda quando selecionado
             end
-        endgenerate
-    end else begin
-        genvar i;
-        generate
-            for (i = 0; i < REG_COUNT; i++) begin
-                regs[i] = 0;
+            
+            SETUP: begin
+                PE = SEND; // Após carregar os dados, vai para envio
             end
-        endgenerate
+            
+            SEND: begin
+                // Fica em SEND até que todos os bits sejam enviados
+                if (bit_counter == 0) PE = CLEANUP; 
+            end
+            
+            CLEANUP: begin
+                // Espera o Master baixar o sinal de seleção para voltar a dormir
+                if (se == 1'b0) PE = IDLE; 
+            end
+            
+            default: PE = IDLE;
+        endcase 
+    end   
+
+
+    always_ff @(negedge sclk or negedge reset) begin
+        if (reset == 0) begin
+            temp_reg    <= 0;
+            bit_counter <= (REG_WIDTH * REG_COUNT) - 1; // 15 para 16 bits
+            miso        <= 1'b0;
+        end else begin
+            case (EA)
+                IDLE: begin
+                    miso <= 1'b0;
+                    // Reinicia o contador de bits
+                    bit_counter <= (REG_WIDTH * REG_COUNT) - 1; 
+                end
+                
+                SETUP: begin
+                    
+                    // Concatena os registradores no temp_reg
+                    temp_reg <= {regs[1], regs[0]}; 
+                end
+                
+                SEND: begin
+                    // Joga o Bit Mais Significativo no pino MISO
+                    miso <= temp_reg[(REG_WIDTH * REG_COUNT) - 1];
+                    
+                    // Desloca os bits restantes para a esquerda
+                    temp_reg <= {temp_reg[(REG_WIDTH * REG_COUNT) - 2 : 0], 1'b0};
+                    
+                    if (bit_counter > 0) begin
+                        bit_counter <= bit_counter - 1;
+                    end
+                end
+                
+                CLEANUP: begin
+                    miso <= 1'b0; // Limpa o barramento
+                end
+            endcase
+        end
     end
-end
 
-endmodule 
+endmodule
