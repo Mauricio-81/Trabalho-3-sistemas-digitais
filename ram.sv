@@ -1,8 +1,8 @@
-module ram ( // <-- O nome do módulo mudou aqui!
+module ram (
     input  logic       clk,      // Clock de 100MHz
-    input  logic       we,       // Write Enable (Permissão de escrita)
-    input  logic [7:0] addr,     // Endereço de 8 bits (0 a 255)
-    input  logic [7:0] data_i,   // Dado de entrada (vem do Coletor)
+    input  logic       we,       // Permissão de escrita
+    input  logic [7:0] addr,     // Endereço de 8 bits 
+    input  logic [7:0] data_i,   // Dado de entrada ( Coletor)
     output logic [7:0] data_o    // Dado de saída
 );
 

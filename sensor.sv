@@ -3,16 +3,15 @@ module sensor #(
     parameter REG_COUNT = 2, // 2 registradores de 8 bits = 16 bits totais
     parameter REG_WIDTH = 8
 )(
-    input  logic clock, // Clock interno do sensor (ex: 15MHz, 40MHz)
-    input  logic reset, // Ativo em nível baixo (0)
+    input  logic clock, // Clock interno sensor
+    input  logic reset, // Ativo em nível baixo 
 
-    input  logic se,    // Slave Enable vindo do Master (ativo em 1)
-    output logic miso,  // Master In Slave Out (saída de dados)
-    input  logic mosi,  // Master Out Slave In (entrada de dados, se houver)
-    input  logic sclk   // Clock do SPI vindo do Master (100MHz)
+    input  logic se,    
+    output logic miso, 
+    input  logic mosi,  
+    input  logic sclk   
 );
 
-    // Declarações Internas
     
     // Lista de registradores (Memória interna)
     logic [REG_WIDTH-1:0] regs [REG_COUNT-1:0];
@@ -23,7 +22,7 @@ module sensor #(
     // Contador para gerenciar o envio dos bits
     logic [4:0] bit_counter; 
 
-    // Divisor de clock/contador para simular variação no sensor
+    
     logic [31:0] clk_div;
 
     // Máquina de estados - SPI
@@ -31,7 +30,7 @@ module sensor #(
     state_t EA, PE;
 
     
-    // Atualização Periódica dos Dados (Clock Interno)
+    // Atualização dos Dados Clock Interno
     always_ff @(posedge clock or negedge reset) begin   
         if (reset == 0) begin
             clk_div <= 0;
@@ -63,7 +62,7 @@ module sensor #(
     
     // FSM do SPI - Lógica de Próximo Estado
     always_comb begin
-        PE = EA; // Valor padrão: mantém o estado atual
+        PE = EA; // mantém o estado atual
         case (EA)
             IDLE: begin
                 if (se == 1'b1) PE = SETUP; // Acorda quando selecionado
@@ -79,7 +78,6 @@ module sensor #(
             end
             
             CLEANUP: begin
-                // Espera o Master baixar o sinal de seleção para voltar a dormir
                 if (se == 1'b0) PE = IDLE; 
             end
             

@@ -13,20 +13,20 @@ module coletor_dados (
     output logic [7:0] ram_addr, 
     output logic [7:0] ram_data, 
 
-    // Interface de Comando (Testbench)
-    output logic ready,       // Avisa o TB que está livre (1 = livre)
+    // Interface de Comando TB
+    output logic ready,       // Avisa o TB (1 = livre)
     input  logic start,       // Pulso do TB para iniciar a leitura
     input  logic [1:0] reg_id // Indica qual sensor ler (00, 01, 10 ou 11)
 );
 
     typedef enum logic [3:0] {
-        WAIT_CMD,       // NOVO: Aguarda ordem do Testbench
+        WAIT_CMD,       // Aguarda ordem do Testbench
         SELECT_SENSOR,  
         SPI_CLOCK_HIGH, 
         SPI_CLOCK_LOW,  
         WRITE_RAM_HIGH, 
         WRITE_RAM_LOW,  
-        FINISH_READ     // NOVO: Prepara para a próxima ordem
+        FINISH_READ     // Prepara para a próxima ordem
     } state_t;
 
     state_t EA; 
@@ -41,7 +41,7 @@ module coletor_dados (
             sclk <= 1'b0;
             se <= 4'b0000;
             ram_we <= 1'b0;
-            ram_addr <= 8'h00; // Escrita incremental [cite: 519]
+            ram_addr <= 8'h00; // Escrita incremental 
             ram_data <= 8'h00;
             mosi <= 1'b0;
             bit_counter <= 16;
@@ -96,7 +96,7 @@ module coletor_dados (
                 end
 
                 WRITE_RAM_LOW: begin
-                    ram_addr <= ram_addr + 1; // Incrementa endereço da RAM [cite: 519]
+                    ram_addr <= ram_addr + 1; // Incrementa endereço da RAM 
                     ram_data <= shift_reg[7:0];
                     ram_we <= 1'b1;
                     EA <= FINISH_READ;

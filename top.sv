@@ -6,7 +6,7 @@ module top (
     input  logic clk_50mhz,
     input  logic clk_100mhz,
     
-    // NOVO: Pinos de ligação ao Testbench
+    //Pinos de ligação ao Testbench
     output logic ready_tb,
     input  logic start_tb,
     input  logic [1:0] reg_id_tb
