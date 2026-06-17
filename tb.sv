@@ -59,6 +59,37 @@ module tb;
         
         #500;
         $display("Fim da simulação.");
+	$display("MEM[0] = %h", dut.inst_ram.memoria[0]);
+	$display("MEM[1] = %h", dut.inst_ram.memoria[1]);
+	$display("MEM[2] = %h", dut.inst_ram.memoria[2]);
+	$display("MEM[3] = %h", dut.inst_ram.memoria[3]);
+	$display("MEM[4] = %h", dut.inst_ram.memoria[4]);
+	$display("MEM[5] = %h", dut.inst_ram.memoria[5]);
+	$display("MEM[6] = %h", dut.inst_ram.memoria[6]);
+	$display("MEM[7] = %h", dut.inst_ram.memoria[7]);
+if (dut.inst_ram.memoria[0] !== 8'h00)
+    $error("Erro MEM[0]");
+
+if (dut.inst_ram.memoria[1] !== 8'h80)
+    $error("Erro MEM[1]");
+
+if (dut.inst_ram.memoria[2] !== 8'h00)
+    $error("Erro MEM[2]");
+
+if (dut.inst_ram.memoria[3] !== 8'hC0)
+    $error("Erro MEM[3]");
+
+if (dut.inst_ram.memoria[4] !== 8'h01)
+    $error("Erro MEM[4]");
+
+if (dut.inst_ram.memoria[5] !== 8'h00)
+    $error("Erro MEM[5]");
+
+if (dut.inst_ram.memoria[6] !== 8'h01)
+    $error("Erro MEM[6]");
+
+if (dut.inst_ram.memoria[7] !== 8'h41)
+    $error("Erro MEM[7]");
         $stop;
     end
 
