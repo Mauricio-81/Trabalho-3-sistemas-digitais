@@ -22,7 +22,7 @@ module sensor #(
     logic [4:0] bit_counter;
 
     logic [31:0] clk_div;
-
+    
     // FSM SPI
     typedef enum logic [2:0] {
         IDLE,
