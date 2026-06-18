@@ -5,7 +5,7 @@ module ram (
     input  logic [7:0] data_i,   // Dado de entrada ( Coletor)
     output logic [7:0] data_o    // Dado de saída
 );
-
+    
     // Declaração da matriz de memória: 256 posições de 8 bits
     logic [7:0] memoria [0:255];
 
