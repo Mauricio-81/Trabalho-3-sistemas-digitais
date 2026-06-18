@@ -1,7 +1,7 @@
 module coletor_dados (
     input  logic clk,         // Clock principal de 100MHz do Coletor
     input  logic rst,         // Reset ativo em nível baixo (0)
-
+    
     // Interface SPI
     input  logic miso,        
     output logic mosi,        
