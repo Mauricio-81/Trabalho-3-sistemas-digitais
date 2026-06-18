@@ -68,5 +68,5 @@ module top (
     sensor #(.SENSOR_ID(4), .REG_COUNT(2), .REG_WIDTH(8)) slave_4 (
         .clock (clk_25mhz), .reset (rst), .se (se[3]), .miso (miso_s4), .mosi (mosi), .sclk (sclk)
     );
-
+    
 endmodule
