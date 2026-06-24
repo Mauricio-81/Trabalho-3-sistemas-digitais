@@ -4,12 +4,12 @@
 ## - uncomment the lines corresponding to used pins
 ## - rename the used ports (in each line, after get_ports) according to the top level signal names in the project
 
-set_property -dict { CLOCK_DEDICATED_ROUTE FALSE } [get_nets ssl_IBUF]
-set_property -dict { CLOCK_DEDICATED_ROUTE FALSE } [get_nets ssr_IBUF]
+##set_property -dict { CLOCK_DEDICATED_ROUTE FALSE } [get_nets ssl_IBUF]
+##set_property -dict { CLOCK_DEDICATED_ROUTE FALSE } [get_nets ssr_IBUF]
 
 ## Clock signal
-set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports clock];
-create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clock];
+##set_property -dict { PACKAGE_PIN E3    IOSTANDARD LVCMOS33 } [get_ports clock];
+##create_clock -period 10.000 -name sys_clk_pin -waveform {0.000 5.000} -add [get_ports clock];
 
 ##Switches
 set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { SW[0] }]; #?? Sch=sw[0]
