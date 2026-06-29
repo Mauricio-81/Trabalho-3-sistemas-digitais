@@ -32,6 +32,7 @@ module top (
         endcase
     end
 
+(* keep_hierarchy = "yes", dont_touch = "true" *)
     coletor_dados master (
         .clk     (clk_100mhz),
         .rst     (rst),
@@ -47,7 +48,8 @@ module top (
         .start   (start_tb),
         .reg_id  (reg_id_tb)
     );
-
+    
+(* keep_hierarchy = "yes", dont_touch = "true" *)
     ram inst_ram (
         .clk     (clk_100mhz),
         .we      (ram_we),
@@ -56,15 +58,20 @@ module top (
         .data_o  (ram_data_out)
     );
 
+(* keep_hierarchy = "yes", dont_touch = "true" *)
     sensor #(.SENSOR_ID(1), .REG_COUNT(2), .REG_WIDTH(8)) slave_1 (
         .clock (clk_15mhz), .reset (rst), .se (se[0]), .miso (miso_s1), .mosi (mosi), .sclk (sclk)
     );
+    
+(* keep_hierarchy = "yes", dont_touch = "true" *)
     sensor #(.SENSOR_ID(2), .REG_COUNT(2), .REG_WIDTH(8)) slave_2 (
         .clock (clk_40mhz), .reset (rst), .se (se[1]), .miso (miso_s2), .mosi (mosi), .sclk (sclk)
     );
+(* keep_hierarchy = "yes", dont_touch = "true" *)    
     sensor #(.SENSOR_ID(3), .REG_COUNT(2), .REG_WIDTH(8)) slave_3 (
         .clock (clk_50mhz), .reset (rst), .se (se[2]), .miso (miso_s3), .mosi (mosi), .sclk (sclk)
     );
+(* keep_hierarchy = "yes", dont_touch = "true" *)    
     sensor #(.SENSOR_ID(4), .REG_COUNT(2), .REG_WIDTH(8)) slave_4 (
         .clock (clk_25mhz), .reset (rst), .se (se[3]), .miso (miso_s4), .mosi (mosi), .sclk (sclk)
     );
